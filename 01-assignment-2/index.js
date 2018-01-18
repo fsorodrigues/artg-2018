@@ -2,7 +2,7 @@ console.log('Week 1 Assignment 2: Data Import, Parse, and Discovery');
 
 function parse(d){
 	/**
-	1.0 
+	1.0
 	YOUR CODE HERE
 	Complete the parse function to import the trips dataset with the appropriate types and property names
 	Each trip should be represented as following
@@ -31,11 +31,11 @@ function parse(d){
 d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 
 	//Now that the trips dataset has been imported and parsed, let's step through a series of exercises to familiarize ourselves with the data
-	console.log(trips);
+	// console.log(trips);
 
 	/***
 	2.0 Discovering min, max, mean, median
-	
+
 	2.1 What is the duration in seconds of the longest trip?
 	Hint: use d3.max()
 	YOUR CODE HERE:
@@ -43,45 +43,60 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	console.log('There are ' + trips.length + ' trips.');
 	console.log(`There are ${trips.length} trips.`);
 
-	const longestDuration = d3.max(trips, function(d){ return d.duration }); //MODIFY THIS
-	const longestDuration2 = d3.max( trips.map(function(d){ return d.duration}) );
+	const tripDurations = trips.map(function(d) { return d.duration })
+
+	// Using d3.max
+	const longestDuration = d3.max(tripDurations); //MODIFY THIS
+	console.log(`Longest trip duration is ${longestDuration} seconds`);
 	console.log(`Longest trip duration is ${longestDuration/3600} hours`);
+
+	//using d3.extent
+	const extentDuration = d3.extent(tripDurations);
+	const duration = { min: extentDuration[0], max: extentDuration[1] };
+	console.log(`Longest trip duration is ${duration.max} seconds`);
+	console.log(`Longest trip duration is ${duration.max/3600} hours`);
 
 	/***
 	2.2 What about the shortest trip?
 	YOUR CODE HERE:
 	***/
-	const shortestDuration = d3.min(trips, function(d){return d.duration }); //MODIFY THIS
+
+	// Using d3.min
+	const shortestDuration = d3.min(tripDurations); //MODIFY THIS
 	console.log(`Shortest trip duration is ${shortestDuration}`);
+
+	//using d3.extent
+	console.log(`Shortest trip duration is ${duration.min}`);
 
 	/***
 	2.3 Average and median trip duration?
 	Please look at the definition of "mean" and "median" if you are not entirely sure of the difference
 	YOUR CODE HERE:
 	***/
-	const meanDuration = undefined; //MODIFY THIS
-	const medianDuration = undefined; //MODIFY THIS
+	const meanDuration = d3.mean(tripDurations);
+	const medianDuration = d3.median(tripDurations);
 	console.log(`Median duration is ${medianDuration} seconds; mean duration is ${meanDuration} seconds`);
 
 	/***
 	3.0 Filter, sort, map, slice
-	
+
 	3.1 Let's separate all the trips into those taken by registered vs casual users
 	Hint: use Array.prototype.filter
 	YOUR CODE HERE:
 	***/
-	const registeredTrips = trips.filter(function(d){return d.subsc_type==='Registered'});
-	const casualTrips = trips.filter(function(d){return d.subsc_type==='Casual'});
+	const registeredTrips = trips.filter(function(d){ return d.subsc_type === 'Registered' });
+	const casualTrips = trips.filter(function(d){ return d.subsc_type === 'Casual' });
 	console.log(registeredTrips);
 	console.log(casualTrips);
-	console.log(registeredTrips === trips); //As you can see, Array.prototype.filter produces an entirely new array
+	console.log(registeredTrips === trips);
+	//As you can see, Array.prototype.filter produces an entirely new array
 
 	/**
 	3.2 Sort registeredTrips by descending trip duration (i.e. longest trips first)
 	Hint: use Array.prototype.sort
 	YOUR CODE HERE:
 	***/
-	const sortedRegisteredTrips = registeredTrips.sort(function(a,b){return b.duration - a.duration});
+	const sortedRegisteredTrips = registeredTrips.sort(function(a,b) { return b.duration - a.duration });
 	console.log(registeredTrips);
 	console.log(sortedRegisteredTrips);
 	console.log(registeredTrips === sortedRegisteredTrips);
@@ -102,6 +117,8 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	Does Array.prototype.slice create a new array, or modify existing arrays in place?
 	YOUR CODE HERE:
 	***/
+	// By applying boolean comparators checking if top10RegisteredTrips or bottom10RegisteredTrips is equal to the registeredTrips array. A False output is expected, which confirms that top10/bottom10 are new arrays, and thus that the slice() method behaves like filter() and not like sort().
+	console.log(top10RegisteredTrips === registeredTrips || bottom10RegisteredTrips === registeredTrips); // False
 
 	/**
 	3.4 Instead of an array of trips, generate a completely new array of departure timestamps (i.e. t0)
@@ -109,21 +126,34 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	Again, does Array.prototype.map create a new array, or modify existing arrays in place?
 	YOUR CODE HERE:
 	***/
-	const departureTimestamps = trips.map(function(d){ return d.t0});
+	const departureTimestamps = trips.map(function(d){ return d.t0 });
 	console.log(departureTimestamps);
+
+	// Comparing arrays should do the trick once more. A new False output is expected again, confirming that the map() method return a new array.
+	console.log(departureTimestamps === trips); // False
 
 	/***
 	4.0 Nest
-	
+
 	4.1 Create a nested array, where trips are nested by departure station (i.e. station0)
 	YOUR CODE HERE:
 	***/
+
+	const nestedByDepStation = d3.nest()
+															 .key(function(d) { return d.station0 })
+															 .entries(trips);
+
+	console.log(nestedByDepStation);
 
 	/***
 	4.2 Further "collapse" this array, so that for each departure stations, we have the number of trips departing from each
 	Hint: there are multiple ways of doing this, including using d3.nest.rollup, but attempt this with what we've learned in this assignment
 	YOUR CODE HERE:
 	***/
+
+	nestedByDepStation.forEach(function(d) {
+		d.totalTrips = +d.values.length;
+	});
 
 	/***
 	5.0 BONUS Question
@@ -132,7 +162,20 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	YOUR CODE HERE:
 	***/
 
-	
+	// 2.1
+	const maxDuration = tripDurations.reduce(function(a, b) {
+    	return Math.max(a, b);
+	});
+
+	console.log(`Longest trip duration is ${maxDuration} seconds`);
+
+	// 2.2
+	const minDuration = tripDurations.reduce(function(a, b) {
+    	return Math.min(a, b);
+	});
+
+	console.log(`Shortest trip duration is ${minDuration}`);
+
 });
 
 console.log('After d3.csv');
