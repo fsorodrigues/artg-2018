@@ -151,9 +151,12 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	YOUR CODE HERE:
 	***/
 
-	nestedByDepStation.forEach(function(d) {
-		d.totalTrips = +d.values.length;
-	});
+	const departureVolumeByStation0 = nestedByDepStation.map(function(d) { return { station0: d.key, trips: d.values.length } });
+
+	console.log(departureVolumeByStation0);
+	// nestedByDepStation.forEach(function(d) {
+	// 	d.totalTrips = +d.values.length;
+	// });
 
 	/***
 	5.0 BONUS Question
