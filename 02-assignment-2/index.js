@@ -11,10 +11,14 @@ function fruit(){
 	const orange = 'navel';
 
 	console.log(apple); //will this work? why?
+	// It will work because the variable apple is globally scoped.
 };
 
 console.log(apple); //will this work? why?
+// It will work because the variable apple is globally scoped.
+
 //console.log(orange); //will this work? why?
+// It will not work because the variable orange is locally scoped to the function fruit().
 
 
 
@@ -56,21 +60,27 @@ d3.select(document.querySelector('body'))
 	.each(function(d,i){
 		console.group('---2.5---');
 		console.log(this); //what is "this"?
+		// this, in the case, returns the <span> node in the HTML document.
 		console.log(d);
 		console.log(i);
 		console.groupEnd();
 	});
 
-//2.6 
+//2.6
 //Also beware of "this" context when using selection.on
 d3.select(document.getElementById('dummy-button'))
 	.on('click', function(d){
 		console.group('---2.6---');
 		console.log(this); //what is "this"?
+		// this, in the case, returns the <button> node in the HTML document that has been clicked.
 		console.groupEnd();
 
 		//YOUR CODE HERE
 		//How do you change the html content of the button to "I'm clicked?"
+		var selection = d3.select(this);
+
+		selection.html("I'm clicked");
+
 	});
 
 
@@ -89,6 +99,6 @@ const xSaysY = function(x){
 }
 
 const simonSays = xSaysY('Simon');
-console.log(simonSays); 
+console.log(simonSays);
 console.log(typeof simonSays);
 console.log(simonSays('hello world'));
