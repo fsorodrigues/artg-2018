@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 export default function activityHistogram(data){
 
 	//Need to append a the proper DOM scaffolding
-	const width = this.clientWidth; //What is "this"?
+	const width = this.clientWidth; //What is "this"? "this" refers the <div> element appended in index.js that contains <svg>.
 	const height = this.clientHeight;
 	const margin = {t:15,r:25,b:25,l:25};
 	const w = width - margin.l - margin.r;
@@ -66,6 +66,7 @@ export default function activityHistogram(data){
 	const binsEnter = binsUpdate.enter()
 		.append('rect')
 		.attr('class','bin') //If you forget this, what will happen if we re-run this the activityHistogram function?
+		// Not including class .bin would interfere with the update of the data. It has no effect on the initial drawing, however.
 		.attr('x', d => scaleX(d.x0))
 		.attr('width', d => (scaleX(d.x1) - scaleX(d.x0)))
 		.attr('y', d => h)

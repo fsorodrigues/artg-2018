@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 //Install bootstrap first, using npm install bootstrap --save
-//import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './style.css';
 
 import parse from './parse';
@@ -18,15 +18,21 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 
 	console.log(trips);
 
+	// UPDATE selection --> data bind
 	const stationNodes = d3.select('#timeline-multiple')
 		.selectAll('.station-node')
 		.data(tripsByStation0);
+
+	// ENTER selection --> appending new elements
 	const stationNodesEnter = stationNodes.enter()
 		.append('div')
 		.style('width','300px')
 		.style('height','180px')
 		.style('float','left');
+
 	stationNodes.merge(stationNodesEnter)
 		.each(activityHistogram); //What arguments are we passing to activityHistogram?
+  // activityHistogram is receiving tripsByStation0, the data bound to the selection on line 24 above.
+	// by definition (in activityHistogram.js), the function takes 1 parameter, which is expected to be a data object.
 
 });

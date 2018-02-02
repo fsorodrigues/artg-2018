@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 export default function timeline(data){
 
 	const rootDom = document.getElementById('timeline-multiple');
-	
+
 	const w = rootDom.clientWidth,
 		h = rootDom.clientHeight;
 	const margin = {t:50,r:50,b:50,l:50};
@@ -12,6 +12,7 @@ export default function timeline(data){
 		.append('svg')
 		.attr('width',w)
 		.attr('height',h);
+
 	const plot = svg.append('g')
 		.attr('transform',`translate(${margin.l},${margin.t})`);
 
@@ -44,12 +45,15 @@ export default function timeline(data){
 	const line = d3.line()
 		.x(function(d){ return (scaleX(d.t0) + scaleX(d.t1))/2})
 		.y(function(d){ return scaleY(d.tripVolume)});
+
 	const area = d3.area()
 		.x(function(d){ return (scaleX(d.t0) + scaleX(d.t1))/2})
 		.y1(function(d){ return scaleY(d.tripVolume)})
 		.y0(h - margin.t - margin.b);
+
 	const axisX = d3.axisBottom()
 		.scale(scaleX);
+
 	const axisY = d3.axisLeft()
 		.scale(scaleY)
 		.tickSize(- w + margin.l + margin.r);
@@ -62,6 +66,7 @@ export default function timeline(data){
 		.style('fill','none')
 		.style('stroke','rgb(50,50,50)')
 		.style('stroke-width','2px');
+
 	plot.append('path')
 		.attr('class','area')
 		.datum(tripsPerWeek)
@@ -73,6 +78,7 @@ export default function timeline(data){
 		.attr('class','axis axis-x')
 		.attr('transform',`translate(0, ${h - margin.t - margin.b})`)
 		.call(axisX);
+
 	plot.append('g')
 		.attr('class','axis axis-y')
 		.call(axisY)
