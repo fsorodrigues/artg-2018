@@ -1,6 +1,12 @@
 import * as d3 from 'd3';
 
-export default function activityHistogram(data){
+export default function activityHistogram(data,i){
+
+	// data --> { key, values } , one for each of the objects in the nested dataset from index.js.
+
+	console.log(data);
+	console.log(i);
+	console.log(this);
 
 	//Need to append a the proper DOM scaffolding
 	const width = this.clientWidth; //What is "this"? "this" refers the <div> element appended in index.js that contains <svg>.
@@ -26,6 +32,7 @@ export default function activityHistogram(data){
 	const histogram = d3.histogram()
 		.value(d => d.time_of_day0)
 		.thresholds(d3.range(0,24,.25));
+
 	const tripsByQuarterHour = histogram(data.values)
 		.map(d => {
 			return {
@@ -89,9 +96,11 @@ export default function activityHistogram(data){
 	const axisXNode = plot
 		.selectAll('.axis-x')
 		.data([1]);
+
 	const axisXNodeEnter = axisXNode.enter()
 		.append('g')
 		.attr('class','axis-x');
+
 	axisXNode.merge(axisXNodeEnter)
 		.attr('transform',`translate(0,${h})`)
 		.call(axisX);
@@ -99,13 +108,16 @@ export default function activityHistogram(data){
 	const axisYNode = plot
 		.selectAll('.axis-y')
 		.data([1]);
+
 	const axisYNodeEnter = axisYNode.enter()
 		.append('g')
 		.attr('class','axis-y');
+
 	axisYNode.merge(axisYNodeEnter)
 		.call(axisY);
 
 	axisYNodeEnter.select('.domain').style('display','none');
+
 	axisYNodeEnter.selectAll('line')
 		.style('stroke','rgb(80,80,80)')
 		.style('stroke-dasharray','2px 2px');

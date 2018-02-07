@@ -14,14 +14,14 @@ const h = height - margin.t - margin.b;
 
 const plot = d3.select('#activity-histogram')
 	.append('svg')
-	.attr('width',width)
-	.attr('height',height)
+	.attr('width', width)
+	.attr('height', height)
 	.append('g')
-	.attr('class','acitivity-histogram-inner')
-	.attr('transform',`translate(${margin.l}, ${margin.t})`);
+	.attr('class', 'acitivity-histogram-inner')
+	.attr('transform', `translate(${margin.l}, ${margin.t})`);
 
 //Import and parse data
-d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
+d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips) {
 
 	// Bind selection to the entire array of trips, one to one
 	plot.datum(trips) //note: .datum(), not .data()
@@ -45,13 +45,12 @@ function activityHistogram(data) {
 				volume: d.length
 			}
 		});
+
 	console.log(tripsByQuarterHour);
 
 	//Set up scales in the x and y direction
 	const scaleX = d3.scaleLinear().domain([0,24]).range([0,w]);
 	const maxVolume = d3.max(tripsByQuarterHour, d => d.volume);
-
-	console.log(maxVolume);
 	const scaleY = d3.scaleLinear().domain([0,maxVolume]).range([h,0]).nice();
 
 	//Set up axis generator
@@ -72,21 +71,38 @@ function activityHistogram(data) {
 	//Draw
 	/*** YOUR CODE HERE ***/
 
+	const rootElement = this; // <g.activity-histogram-inner>
+
 	// UPDATE selection ---> data join
-	const barNodes = plot.selectAll(".week-bin")
-		.data(tripsByQuarterHour)
+	const barNodes = d3.select(rootElement)
+		.selectAll(".bin") //  selection of 0 elements
+		.data(tripsByQuarterHour) // array of 96 bins
+		// enter set = 96
+		// exit set = 0
 
 	// ENTER selection ---> appending new DOM elements
 	const barEnter = barNodes.enter()
 		.append("g")
-		.attr("class", "week-bin")
-		.attr('transform', (d,i) => { return `translate(${scaleX(d.x0)},${0})`; });
+		.attr("class", "bin")
+		.attr('transform', (d,i) => `translate(${scaleX(d.x0)},${0})`);
 
-	barEnter.append("rect")
-		.attr("x", 1)
-		.attr("y", function(d) { return scaleY(d.volume); })
+	const barEnterRect = barEnter.append("rect")
+		.attr("y", h)
 		.attr("width", (w/tripsByQuarterHour.length - 2))
-		.attr("height", d => { return (h - scaleY(d.volume)); });
+		.attr("height", 0)
+		.attr("fill", "rgba(80,80,80,1)");
+
+	// ENTER + UPDATE
+	barEnterRect.merge(barNodes)
+		.transition()
+		.duration(1000)
+		.attr("fill", "rgba(80,80,80,.4)")
+		.attr("y", d => scaleY(d.volume) )
+		.attr("height", d => h - scaleY(d.volume))
+
+  // EXIT
+	barNodes.exit().remove();
+
 
 	/*** YOUR CODE HERE ***/
 
