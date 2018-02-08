@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-function Histogram(_){ // factory / container --> produces the module and takes care of config not in the exported function
+function Histogram(_){ // factory / container --> produces the module and takes care of config outside the exported function
 
 let maxVolume = _ || 300;
 let margin = { t:15, r:25, b:25, l:25};
@@ -27,6 +27,8 @@ let defaultColor = "rgb(50,50,50)";
 		const svg = d3.select(this)
 			.selectAll('svg')
 			.data([1]); //What's going on here?
+			// setting up that DOM always has only one SVG per div even when updates happen.
+
 		const svgEnter = svg.enter().append('svg')
 			.attr('width',width)
 			.attr('height',height);
