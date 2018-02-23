@@ -9,8 +9,17 @@ import Timeline from './Timeline';
 console.log('Week 4 exercise 2');
 
 // Create instances of this reusable module
-const timelineMultiple = Timeline();
-const timelineMain = Timeline();
+const timelineMain = Timeline()
+	.timeInterval(d3.timeWeek)
+	.timeRange(2012,2012) // start date  & end date
+	.maxVolume(3000)
+	.thresholds(d3.timeWeek.range(new Date(2012,0,1), new Date(2012,11,31), 1));
+
+const timelineMultiple = Timeline()
+	.timeInterval(d3.timeWeek)
+	.timeRange(2012,2012) // start date  & end date
+	.maxVolume(500)
+	.thresholds(d3.timeWeek.range(new Date(2012,0,1), new Date(2012,11,31), 1));
 
 //Import and parse data
 d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){

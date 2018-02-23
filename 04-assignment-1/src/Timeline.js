@@ -1,8 +1,11 @@
 import * as d3 from 'd3';
 
-function Timeline(_, y, m, d){
-
-	let margin = { t: 10, r: 15, b: 20, l: 50};
+function Timeline(_){
+	const margin = {t:20, r:30, b:20, l: 50};
+	let _timeInterval;
+	let _timeRange;
+	let _maxVolume;
+	let _thresholds;
 
 	function exports(data,i){
 		let width = this.clientWidth;
@@ -12,9 +15,9 @@ function Timeline(_, y, m, d){
 
 		//Data transformation
 		//Bin the trips by week
-		const timeInterval = d3.timeWeek;
-		const timeRange = [new Date(2012,0,1), new Date(2012,11,31)];
-		const thresholds = timeInterval.range(timeRange[0], timeRange[1], 1);
+		const timeInterval = _timeInterval; // expects d3.timeWeek/Year/Month
+		const timeRange = _timeRange; // expects array with 2 Date Objects [new Date(2012,0,1), new Date(2012,11,31)]
+		const thresholds = _thresholds; // expects array of time intervals timeInterval.range(timeRange[0], timeRange[1], 1)
 
 		const histogram = d3.histogram()
 			.value(d => d.t0)
@@ -31,8 +34,8 @@ function Timeline(_, y, m, d){
 
 		//Mine the data and set up scales
 		const scaleX = d3.scaleTime().domain(timeRange).range([0,w]);
-		const maxVolume = d3.max(tripsByInterval, d => d.volume);
-		const scaleY = d3.scaleLinear().domain([0, maxVolume]).range([h,0]);
+		const maxVolume = _maxVolume;// d3.max(tripsByInterval, d => d.volume);
+		const scaleY = d3.scaleLinear().domain([0, _maxVolume]).range([h,0]);
 
 		// setting up axes
 		const axisY = d3.axisLeft()
@@ -115,28 +118,23 @@ function Timeline(_, y, m, d){
 
 	}
 
-	exports.width = function(_){
-		return this
-	}
-
-	exports.height = function(_){
-		return this
-	}
-
-	exports.margin = function(_){
-		return this
-	}
-
-	exports.timeRange = function(_){
-		timeRange = [new Date(year,0,1), new Date(year,11,31)];
+	exports.timeRange = function(startYear, endYear){
+		_timeRange = [new Date(startYear,0,1), new Date(endYear,11,31)]; // expects integers
 		return this
 	}
 
 	exports.timeInterval = function(_){
+		_timeInterval = _; // expects integers d3 time function
 		return this
 	}
 
 	exports.maxVolume = function(_){
+		_maxVolume = _; // expects integer
+		return this
+	}
+
+	exports.thresholds = function(_){
+		_thresholds = _; // expects array of time intervals
 		return this
 	}
 
