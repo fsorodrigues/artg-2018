@@ -9,7 +9,6 @@ select('.app-container')
 	.attr('class','module')
 	.each(someModule);
 
-
 //SCROLLMAGIC
 //First, install scrollmagic using "npm install scrollmagic --save"
 const Scrollmagic = require('scrollmagic');
@@ -44,5 +43,15 @@ const scene2 = new Scrollmagic.Scene({
 	})
 	.addTo(controller);
 
-
-
+const scene3 = new Scrollmagic.Scene({
+		triggerElement: '#scene-3'
+	})
+	.on('enter', () => {
+		console.log('Scene-3:enter')
+		someModule.changeState(500);
+	})
+	.on('leave', () => {
+		console.log('Scene-3:end')
+		someModule.changeState(0);
+	})
+	.addTo(controller)

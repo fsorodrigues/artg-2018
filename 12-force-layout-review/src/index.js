@@ -29,7 +29,7 @@ const plot2 = select('.container')
 
 //Create an array of node elements
 const nodes = Array.from({length:1000})
-	.map(v => {
+	.map(() => {
 		return {
 			value:Math.random()
 		}
@@ -50,22 +50,25 @@ elements = elements.enter()
 	.attr('height',10);
 
 //Create a force layout
-const simulation = forceSimulation();
+const simulation = forceSimulation(); //d3.forceSimulation was imported
 //Force simulation can be customized by the addition of different forces
-const center = forceCenter(w/2,h/2);
-const xPos = forceX();
-const yPos = forceY();
-const charge = forceManyBody().strength(.1);
-const collide = forceCollide().radius(d => d.value*10);
+const center = forceCenter(w/2,h/2); //d3.forceCenter was imported
+const xPos = forceX().x(d => d.value>0.5 ? w*2/3 : w/3);
+const yPos = forceY().y(h/2);
+const charge = forceManyBody().strength(.1); //d3.forceManyBody was imported
+const collide = forceCollide().radius(d => d.value*2); //d3.forceCollide was imported
 //Now customize the force layout
 simulation
 	.force('charge',charge)
 	.force('collide',collide)
-	//.force('xPos',xPos)
-	//.force('yPos',yPos)
+	.force('xPos',xPos)
+	.force('yPos',yPos)
 	.force('center',center)
 	.nodes(nodes)
 	.on('tick', () => {
 		//YOUR CODE HERE
+		elements.attr('transform', d => `translate(${d.x},${d.y})`)
+	})
+	.on('end', () => {
+		console.log('simulation end')
 	});
-
